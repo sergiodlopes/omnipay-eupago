@@ -28,37 +28,55 @@ For instalation details please check the [omnipay](https://github.com/thephpleag
 - 'amount' - Purchase amount
 - 'transactionId' - usually this is the order ID
 
-## Example 
+## Examples
+
+### Create transaction
 
 
 ```php
 
 $gateway = Omnipay::create('Eupago_Multibanco');
 
-//required fields
+// required fields
 $gateway->setApiKey('xxx-xxx-xxx-xxx');
 $gateway->setCurrency('EUR');
 $gateway->setTransactionId('xxxxx');
+// Optionally with start/end date
+$gateway->setStartDate(new \DateTime);
+$gateway->setEndDate((new \DateTime)->modify('48 hours'));
 
 $response = $gateway->purchase(['amount' => '10.00'])->send();
 
-// return the euPago api response with payment credentials
-// see src/message/response.php methods for more information
-$paymentData = $response->getData();
-
-// return the Transaction Reference
-// the transaction Reference is required for call the status of payment, you should store them in your "orders" table related database
-$referenceId = $response->getTransactionReference();
-
-//return the status of transaction (pendent, paid , not_exist, etc)
-$paymentStatus = $gateway->checkStatus(['TransactionReference' => 'xxxxxx'])->send();
-
 if ($response->isSuccessful()) {
-    // payment was successful: update database
-	// you will nedd to store some adicional data like transaction reference,
+	// return the euPago api response with payment credentials
+	// see src/Message/MultibancoResponse.php methods for more information
+	$paymentData = $response->getData();
+
+	// return the Transaction Reference
+	// the transaction Reference is required for call the status of payment, you should store them in your "orders" table related database
+	$referenceId = $response->getTransactionReference();
 } else {
-    // payment failed: display message to customer
+    // Transaction creation failed: display message to customer
     echo $response->getMessage();
 }
 
+
 ```
+
+### Check payment status
+
+```php
+
+$gateway = Omnipay::create('Eupago_Multibanco');
+
+$paymentStatus = $gateway->checkStatus([
+	'transactionReference' => 'xxxxxx'
+])->send();
+
+if ($paymentStatus->isPaid()) {
+    // payment was successful: update database
+} else {
+    // payment failed: display message to customer
+    echo $paymentStatus->getMessage();
+}
+
