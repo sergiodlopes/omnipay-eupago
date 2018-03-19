@@ -1,0 +1,39 @@
+{
+    "name": "sergiodlopes/omnipay-eupago",
+    "type": "library",
+    "description": "euPago, Instituição de Pagamento gateway",
+    "keywords": [
+        "Eupago",
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment",
+		"multibanco",
+        "mbway",
+        "pagaqui",
+        ""
+    ],
+    "homepage": "https://github.com/sergiodlopes/omnipay-eupago",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sérgio Dinis Lopes",
+            "email": "contacto@sergiodinislopes.pt"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Omnipay\\Eupago\\" : "src/" }
+    },
+    "require": {
+         "omnipay/common": "~2.0"
+    },
+    "require-dev": {
+        "omnipay/tests": "~2.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1.x-dev"
+        }
+    }
+}
