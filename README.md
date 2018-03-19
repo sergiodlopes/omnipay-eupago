@@ -13,7 +13,7 @@ For instalation details please check the [omnipay](https://github.com/thephpleag
 
 ## Implemented Payment Methods
 
-- **Multibanco** - Create MB references with and without start/end date, minimum/maximum amount support (just set the start/end date when creating a payment)
+- **Multibanco** - Create MB references with and without start/end date, minimum/maximum amount support (just set the respective parameters)
 - **MBWay** - MBWay payment system
 - **PayShop**
 - **Pagaqui**
