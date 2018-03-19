@@ -30,7 +30,7 @@ For instalation details please check the [omnipay](https://github.com/thephpleag
 
 ## Examples
 
-### Create transaction
+#### Create Multibanco reference
 
 
 ```php
@@ -63,12 +63,13 @@ if ($response->isSuccessful()) {
 
 ```
 
-### Check payment status
+#### Check Multibanco reference status
 
 ```php
 
 $gateway = Omnipay::create('Eupago_Multibanco');
 
+// The transaction reference is required
 $paymentStatus = $gateway->checkStatus([
 	'transactionReference' => 'xxxxxx'
 ])->send();
@@ -80,3 +81,5 @@ if ($paymentStatus->isPaid()) {
     echo $paymentStatus->getMessage();
 }
 
+
+```
