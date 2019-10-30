@@ -12,19 +12,29 @@ use DateTime;
  * To use MultibancoDL, just pass the parameters 'startDate' and/or 'endDate',
  * and it will use action "gerarReferenciaMBDL", otherwise,
  * fallsback to default "gerarReferenciaMB".
- * 
+ *
  */
 class MultibancoGateway extends AbstractGateway {
 
     use ParametersTrait;
 
 /**
- * Get friendly name.
+ * Get gateway display name
  *
- * @return string
+ * This can be used by carts to get the display name for each gateway.
  */
     public function getName() {
-        return 'Eupago Multibanco';
+        return 'Multibanco';
+    }
+
+/**
+ * Get gateway short name
+ *
+ * This name can be used with GatewayFactory as an alias of the gateway class,
+ * to create new instances of this gateway.
+ */
+    public function getShortName() {
+        return 'Eupago_Multibanco';
     }
 
 /**

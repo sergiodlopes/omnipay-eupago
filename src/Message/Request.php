@@ -21,7 +21,7 @@ class Request extends AbstractRequest {
  * @var array
  */
     protected $_soapEndpoints = array(
-        'test' => 'https://replica.eupago.pt/replica.eupagov8.wsdl',
+        'test' => 'https://sandbox.eupago.pt/replica.eupagov8.wsdl',
         'live' => 'https://seguro.eupago.pt/eupagov8.wsdl'
     );
 
@@ -31,7 +31,7 @@ class Request extends AbstractRequest {
  * @var array
  */
     protected $_restEndpoints = array(
-        'test' => 'https://replica.eupago.pt/clientes/rest_api',
+        'test' => 'https://sandbox.eupago.pt/clientes/rest_api',
         'live' => 'https://seguro.eupago.pt/clientes/rest_api'
     );
 

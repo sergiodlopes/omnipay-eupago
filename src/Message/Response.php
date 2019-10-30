@@ -43,4 +43,14 @@ class Response extends AbstractResponse {
         return isset($data->{$property}) ? $data->{$property} : null;
     }
 
+/**
+ * Helper method to extract properties from response data.
+ *
+ * @param string $property Property name to return value
+ * @return mixed
+ */
+    public function __get($property) {
+        return $this->_getData($property);
+    }
+
 }

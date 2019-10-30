@@ -122,8 +122,8 @@ class MultibancoRequest extends Request {
  * @return string Action
  */
     protected function _getAction() {
-		return $this->_hasDateLimit() || $this->_hasAmountLimit() ? 'gerarReferenciaMBDL' : 'gerarReferenciaMB';
-	}
+        return $this->_hasDateLimit() || $this->_hasAmountLimit() ? 'gerarReferenciaMBDL' : 'gerarReferenciaMB';
+    }
 
 /**
  * Set start/end date, as well as others in data array.
@@ -142,8 +142,8 @@ class MultibancoRequest extends Request {
  * @return boolean True if any date(s) is set
  */
     protected function _hasDateLimit() {
-		return $this->getStartDate() || $this->getEndDate();
-	}
+        return $this->getStartDate() || $this->getEndDate();
+    }
 
 /**
  * Check if any date is set.
@@ -151,8 +151,8 @@ class MultibancoRequest extends Request {
  * @return boolean True if any date(s) is set
  */
     protected function _hasAmountLimit() {
-		return $this->getMinAmount() || $this->getMaxAmount();
-	}
+        return $this->getMinAmount() || $this->getMaxAmount();
+    }
 
 /**
  * Set start/end date, as well as others in data array.
@@ -160,8 +160,8 @@ class MultibancoRequest extends Request {
  * @param array $data Request data
  */
     protected function _sendDateLimitParameters(&$data) {
-		$startDate = $this->getStartDate();
-		$endDate = $this->getEndDate();
+        $startDate = $this->getStartDate();
+        $endDate = $this->getEndDate();
 
         if ($endDate) {
             $data['data_fim'] = $endDate;
@@ -174,6 +174,7 @@ class MultibancoRequest extends Request {
         if ($startDate) {
             $data['data_inicio'] = $startDate;
         }
+
     }
 
 /**

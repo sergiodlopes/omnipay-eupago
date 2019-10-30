@@ -5,7 +5,7 @@ namespace Omnipay\Eupago;
 use DateTime;
 
 /**
- * Eupago parameters getter/setter. 
+ * Eupago parameters getter/setter.
  **/
 trait ParametersTrait {
 
@@ -37,7 +37,7 @@ trait ParametersTrait {
         if ($arg instanceof DateTime) {
             $arg = $arg->format('Y-m-d');
         }
-        
+
         return $this->setParameter($paramName, $arg);
     }
 

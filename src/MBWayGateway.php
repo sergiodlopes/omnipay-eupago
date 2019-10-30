@@ -10,16 +10,26 @@ use DateTime;
  * Eupago MBWay.
  */
 class MBWayGateway extends AbstractGateway {
-    
+
     use ParametersTrait;
 
 /**
- * Get gateway name.
+ * Get gateway display name
  *
- * @return string Gateway name
+ * This can be used by carts to get the display name for each gateway.
  */
     public function getName() {
-        return 'Eupago MBWay';
+        return 'MBWay';
+    }
+
+/**
+ * Get gateway short name
+ *
+ * This name can be used with GatewayFactory as an alias of the gateway class,
+ * to create new instances of this gateway.
+ */
+    public function getShortName() {
+        return 'Eupago_MBWay';
     }
 
 /**
