@@ -29,11 +29,39 @@ class MBWayRequest extends Request {
     }
 
 /**
+ * Get phone number associated with MBWay.
+ *
+ * @return string MBWay phone number
+ */
+    public function getAlias() {
+        return $this->getParameter('alias');
+    }
+
+/**
  * @inherited
  */
-    public function alias($value) {
+    public function alias($value = null) {
         $value = $this->_validateAlias($value);
         return $this->setParameter('alias', $value);
+    }
+
+/**
+ * Get MBWay transaction description.
+ *
+ * @return string MBWay transaction description
+ */
+    public function getDescription() {
+        return $this->getParameter('campos_extra');
+    }
+
+/**
+ * Get MBWay transaction description.
+ *
+ * @param string $value MBWay transaction description
+ * @return \Omnipay\Eupago\Message\MBWayRequest
+ */
+    public function setDescription($value) {
+        return $this->setParameter('campos_extra', $value);
     }
 
 /**
@@ -73,21 +101,22 @@ class MBWayRequest extends Request {
 /**
  * Make the request.
  *
- * @return string
- * @return string
+ * @param array $data Request data
+ * @return \Omnipay\Eupago\Message\MBWayResponse
  */
     protected function _makeRequest($data) {
         if (!$this->isValid()) {
             return $this->response = new MBWayResponse($this, 'Errors: ' . implode("\n\r", $this->_errors));
         }
 
-        // Basic required data
-        $data = array(
+        // Data
+        $data = [
             'chave' => $this->apiKey(),
             'id' => $this->getTransactionId(),
             'valor' => $this->getAmount(),
-            'alias' => $this->getAlias()
-        );
+            'alias' => $this->getAlias(),
+            'campos_extra' => $this->getDescription()
+        ];
 
         $result = $this->_soapCall($this->getUrl(), 'pedidoMBW', $data);
 

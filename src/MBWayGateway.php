@@ -4,7 +4,6 @@ namespace Omnipay\Eupago;
 
 use Omnipay\Common\AbstractGateway;
 use Omnipay\Eupago\ParametersTrait;
-use DateTime;
 
 /**
  * Eupago MBWay.

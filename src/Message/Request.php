@@ -87,7 +87,8 @@ class Request extends AbstractRequest {
         $endpoints = $this->_soapEndpoints;
 
         // @todo Support for REST API calls
-        if ($apiType = $this->getParameter('apiType') && strtoupper($apiType) === 'REST') {
+        $apiType = $this->getParameter('apiType');
+        if ($apiType && strtoupper($apiType) === 'REST') {
             $endpoints = $this->_restEndpoints;
         }
 
@@ -148,32 +149,34 @@ class Request extends AbstractRequest {
     protected function _soapCall($url, $action, $data) {
 
         // SOAP 1.2 client
-        $params = array(
+        $params = [
             'encoding' => 'UTF-8',
             'cache_wsdl' => WSDL_CACHE_NONE,
             'soap_version' => SOAP_1_2,
             'keep_alive' => false,
             'connection_timeout' => 180,
-            'stream_context' => stream_context_create(array(
-                'ssl' => array(
+            'stream_context' => stream_context_create([
+                'ssl' => [
                     'verify_peer' => false,
                     'verify_peer_name' => false,
                     'allow_self_signed' => true
-                )
-            ))
-        );
+                ]
+            ])
+        ];
 
         try {
             $client = new SoapClient($url, $params);
             $result = $client->{$action}($data);
         } catch (SoapFault $sf) {
-            throw new Exceptione ($sf->getMessage(), $sf->getCode());
+            throw new Exception($sf->getMessage(), $sf->getCode());
         }
 
         return $result;
     }
 
 /**
+ * @todo REST API implementation
+ *
  * Make REST request.
  *
  * @param string $url Data to be sent.
