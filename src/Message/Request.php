@@ -157,13 +157,23 @@ class Request extends AbstractRequest {
  */
     protected function _restCall($url, $data) {
         try {
-            $response = $this->httpClient->post(
-                $url,
-                ['Content-Type' => 'application/json'],
-                json_encode($data)
-            )->send();
-
-            return json_decode((string) $response->getBody()) ?: new \stdClass();
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => json_encode($data),
+                CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Accept: application/json'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 30,
+                CURLOPT_CONNECTTIMEOUT => 10,
+            ]);
+            $raw = curl_exec($ch);
+            if ($raw === false) {
+                $error = curl_error($ch);
+                curl_close($ch);
+                throw new \RuntimeException($error);
+            }
+            curl_close($ch);
+            return json_decode($raw) ?: new \stdClass();
         } catch (\Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
         }
@@ -183,21 +193,32 @@ class Request extends AbstractRequest {
  */
     protected function _apiKeyRestCall($url, $data) {
         try {
-            $response = $this->httpClient->post(
-                $url,
-                [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => 'ApiKey ' . $this->getApiKey()
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => json_encode($data),
+                CURLOPT_HTTPHEADER     => [
+                    'Content-Type: application/json',
+                    'Accept: application/json',
+                    'Authorization: ApiKey ' . $this->getApiKey(),
                 ],
-                json_encode($data)
-            )->send();
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 30,
+                CURLOPT_CONNECTTIMEOUT => 10,
+            ]);
+            $raw = curl_exec($ch);
+            if ($raw === false) {
+                $error = curl_error($ch);
+                curl_close($ch);
+                throw new \RuntimeException($error);
+            }
+            $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
 
-            $result = json_decode((string) $response->getBody()) ?: new \stdClass();
-
-            if (in_array($response->getStatusCode(), [200, 201]) && !isset($result->resposta)) {
+            $result = json_decode($raw) ?: new \stdClass();
+            if (in_array($statusCode, [200, 201]) && !isset($result->resposta)) {
                 $result->resposta = 'OK';
             }
-
             return $result;
         } catch (\Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
