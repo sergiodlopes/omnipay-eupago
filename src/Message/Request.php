@@ -157,12 +157,11 @@ class Request extends AbstractRequest {
  */
     protected function _restCall($url, $data) {
         try {
-            $response = $this->httpClient->request(
-                'POST',
+            $response = $this->httpClient->post(
                 $url,
                 ['Content-Type' => 'application/json'],
                 json_encode($data)
-            );
+            )->send();
 
             return json_decode((string) $response->getBody()) ?: new \stdClass();
         } catch (\Exception $e) {
@@ -184,15 +183,14 @@ class Request extends AbstractRequest {
  */
     protected function _apiKeyRestCall($url, $data) {
         try {
-            $response = $this->httpClient->request(
-                'POST',
+            $response = $this->httpClient->post(
                 $url,
                 [
                     'Content-Type'  => 'application/json',
                     'Authorization' => 'ApiKey ' . $this->getApiKey()
                 ],
                 json_encode($data)
-            );
+            )->send();
 
             $result = json_decode((string) $response->getBody()) ?: new \stdClass();
 
