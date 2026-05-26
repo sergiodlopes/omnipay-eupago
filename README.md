@@ -6,9 +6,28 @@ Eupago it's a Portuguese payment gateway that has many methods available.
 For use it you need create one account in [euPago](https://www.eupago.pt/) website.
 Once installed and configured you are able to use all the features of our [API](https://clients.eupago.pt/api/).
 
+## Version compatibility
+
+| Branch | Omnipay version | PHP requirement |
+|--------|----------------|-----------------|
+| `master` / `2.x` | Omnipay 2.x | PHP 5.4+ |
+| `3.0` | Omnipay 3.x | PHP 7.2+ |
+
 ## Instalation
 
 For instalation details please check the [omnipay](https://github.com/thephpleague/omnipay#installation) git page.
+
+### Omnipay v3 (this branch)
+
+```bash
+composer require sergiodlopes/omnipay-eupago:^3.0
+```
+
+### Omnipay v2 (legacy)
+
+```bash
+composer require sergiodlopes/omnipay-eupago:^2.0
+```
 
 
 ## Implemented Payment Methods

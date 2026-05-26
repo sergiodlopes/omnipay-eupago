@@ -4,7 +4,6 @@ namespace Omnipay\Eupago;
 
 use Omnipay\Common\AbstractGateway;
 use Omnipay\Eupago\ParametersTrait;
-use DateTime;
 
 /**
  * Eupago Pagaqui.
@@ -23,16 +22,6 @@ class PagaquiGateway extends AbstractGateway {
     }
 
 /**
- * Get gateway short name
- *
- * This name can be used with GatewayFactory as an alias of the gateway class,
- * to create new instances of this gateway.
- */
-    public function getShortName() {
-        return 'Eupago_Pagaqui';
-    }
-
-/**
  * Get default parameters.
  *
  * # Options
@@ -47,22 +36,24 @@ class PagaquiGateway extends AbstractGateway {
         );
     }
 
+/**
+ * Initialize a transation by making a request.
+ *
+ * @param array $parameters Transaction parameters
+ * @return \Omnipay\Eupago\Message\PagaquiRequest
+ */
     public function purchase(array $parameters = array()) {
         return $this->createRequest('\Omnipay\Eupago\Message\PagaquiRequest', $parameters);
     }
 
+/**
+ * Check status information.
+ *
+ * @param array $parameters Transaction parameters
+ * @return \Omnipay\Eupago\Message\ReferenceStatusRequest
+ */
     public function checkStatus(array $parameters = array()) {
         return $this->createRequest('\Omnipay\Eupago\Message\ReferenceStatusRequest', $parameters);
-    }
-
-    /**
-    public function completePurchase(array $parameters = array()) {
-        return $this->createRequest('\Omnipay\Eupago\Message\CompletePurchaseRequest', $parameters);
-    }
-    */
-
-    public function acceptNotification(array $parameters = array()) {
-        return $this->createRequest('\Omnipay\Common\Message\NotificationInterface', $parameters);
     }
 
 }

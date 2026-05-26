@@ -26,14 +26,22 @@
         "psr-4": { "Omnipay\\Eupago\\" : "src/" }
     },
     "require": {
-         "omnipay/common": "~2.0"
+        "php": ">=7.2",
+        "omnipay/common": "^3.0",
+        "guzzlehttp/guzzle": "^7.0"
     },
     "require-dev": {
-        "omnipay/tests": "~2.0"
+        "phpunit/phpunit": "^9.0",
+        "mockery/mockery": "^1.4"
     },
     "extra": {
         "branch-alias": {
-            "master": "2.0-dev"
+            "dev-3.0": "3.0-dev"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
         }
     }
 }

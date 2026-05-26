@@ -54,26 +54,6 @@ class Request extends AbstractRequest {
     }
 
 /**
- * Set API key.
- *
- * @param string $apiKey API Key
- * @return \Omnipay\Eupago\Message\Request
- */
-    public function getAmount() {
-        return $this->getParameter('amount');
-    }
-
-/**
- * Set API key.
- *
- * @param string $apiKey API Key
- * @return \Omnipay\Eupago\Message\Request
- */
-    public function getTransactionId() {
-        return $this->getParameter('transactionId');
-    }
-
-/**
  * Get data/parameters.
  *
  * @return array
