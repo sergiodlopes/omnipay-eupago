@@ -21,8 +21,8 @@ class Request extends AbstractRequest {
  * @var array
  */
     protected $_soapEndpoints = array(
-        'test' => 'https://sandbox.eupago.pt/replica.eupagov8.wsdl',
-        'live' => 'https://clients.eupago.pt/eupagov8.wsdl'
+        'test' => 'https://sandbox.eupago.pt/clientes/api/api.php?wsdl=replica.eupagov20.wsdl',
+        'live' => 'https://clientes.eupago.pt/clientes/api/api.php?wsdl=eupagov20.wsdl'
     );
 
 /**
