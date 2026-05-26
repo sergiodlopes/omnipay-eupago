@@ -22,7 +22,7 @@ class Request extends AbstractRequest {
  */
     protected $_soapEndpoints = array(
         'test' => 'https://sandbox.eupago.pt/replica.eupagov8.wsdl',
-        'live' => 'https://seguro.eupago.pt/eupagov8.wsdl'
+        'live' => 'https://clients.eupago.pt/eupagov8.wsdl'
     );
 
 /**
@@ -32,8 +32,15 @@ class Request extends AbstractRequest {
  */
     protected $_restEndpoints = array(
         'test' => 'https://sandbox.eupago.pt/clientes/rest_api',
-        'live' => 'https://seguro.eupago.pt/clientes/rest_api'
+        'live' => 'https://clients.eupago.pt/clientes/rest_api'
     );
+
+/**
+ * Validation errors.
+ *
+ * @var array
+ */
+    protected $_errors;
 
 
 /**
@@ -148,6 +155,8 @@ class Request extends AbstractRequest {
  */
     protected function _soapCall($url, $action, $data) {
 
+        $isTest = explode('-', $this->getApiKey())[0] === 'demo';
+
         // SOAP 1.2 client
         $params = [
             'encoding' => 'UTF-8',
@@ -157,9 +166,9 @@ class Request extends AbstractRequest {
             'connection_timeout' => 180,
             'stream_context' => stream_context_create([
                 'ssl' => [
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
+                    'verify_peer' => !$isTest,
+                    'verify_peer_name' => !$isTest,
+                    'allow_self_signed' => $isTest
                 ]
             ])
         ];

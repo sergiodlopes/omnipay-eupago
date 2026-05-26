@@ -1,10 +1,10 @@
-# Eupago - euPago integration in omnipay 
+# Eupago - euPago integration in omnipay
 
 **This is the euPago solution for omnipay payment processing library**
 
 Eupago is one Portuguese payment gateway that has multiple methods available.
 For use it you need create one account in [euPago](https://www.eupago.pt/) website.
-Once installed and configured you are able to use all the features of our [API](https://seguro.eupago.pt/api/).
+Once installed and configured you are able to use all the features of our [API](https://clients.eupago.pt/api/).
 
 ## Instalation
 
