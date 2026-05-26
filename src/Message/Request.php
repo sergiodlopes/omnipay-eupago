@@ -20,20 +20,20 @@ class Request extends AbstractRequest {
  *
  * @var array
  */
-    protected $_soapEndpoints = array(
-        'test' => 'https://sandbox.eupago.pt/replica.eupagov8.wsdl',
-        'live' => 'https://clients.eupago.pt/eupagov8.wsdl'
-    );
+    protected $_soapEndpoints = [
+        'test' => 'https://sandbox.eupago.pt/clientes/api/api.php?wsdl=replica.eupagov20.wsdl',
+        'live' => 'https://clientes.eupago.pt/clientes/api/api.php?wsdl=eupagov20.wsdl'
+    ];
 
 /**
  * REST endpoints.
  *
  * @var array
  */
-    protected $_restEndpoints = array(
+    protected $_restEndpoints = [
         'test' => 'https://sandbox.eupago.pt/clientes/rest_api',
         'live' => 'https://clients.eupago.pt/clientes/rest_api'
-    );
+    ];
 
 /**
  * Validation errors.
@@ -51,6 +51,25 @@ class Request extends AbstractRequest {
  */
     public function setApiKey($apiKey) {
         return $this->setParameter('apiKey', $apiKey);
+    }
+
+/**
+ * Set API key.
+ *
+ * @return float
+ */
+    public function getAmount() {
+        return $this->getParameter('amount');
+    }
+
+/**
+ * Set API key.
+ *
+ * @param string $apiKey API Key
+ * @return string
+ */
+    public function getTransactionId() {
+        return $this->getParameter('transactionId');
     }
 
 /**

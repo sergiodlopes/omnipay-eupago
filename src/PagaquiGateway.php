@@ -31,9 +31,9 @@ class PagaquiGateway extends AbstractGateway {
  * @return array
  */
     public function getDefaultParameters() {
-        return array(
+        return [
             'apiKey' => ''
-        );
+        ];
     }
 
 /**
@@ -42,7 +42,7 @@ class PagaquiGateway extends AbstractGateway {
  * @param array $parameters Transaction parameters
  * @return \Omnipay\Eupago\Message\PagaquiRequest
  */
-    public function purchase(array $parameters = array()) {
+    public function purchase(array $parameters = []) {
         return $this->createRequest('\Omnipay\Eupago\Message\PagaquiRequest', $parameters);
     }
 
@@ -52,7 +52,7 @@ class PagaquiGateway extends AbstractGateway {
  * @param array $parameters Transaction parameters
  * @return \Omnipay\Eupago\Message\ReferenceStatusRequest
  */
-    public function checkStatus(array $parameters = array()) {
+    public function checkStatus(array $parameters = []) {
         return $this->createRequest('\Omnipay\Eupago\Message\ReferenceStatusRequest', $parameters);
     }
 
