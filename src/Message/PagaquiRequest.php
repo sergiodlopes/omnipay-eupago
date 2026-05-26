@@ -3,10 +3,9 @@
 namespace Omnipay\Eupago\Message;
 
 use Omnipay\Eupago\Message\Request;
-use Exception;
 
 /**
- * Eupago Request
+ * Eupago Pagaqui Request
  */
 class PagaquiRequest extends Request {
 
@@ -21,22 +20,23 @@ class PagaquiRequest extends Request {
 /**
  * Make the request.
  *
- * @return string
- * @return string
+ * @param array $data Request data
+ * @return \Omnipay\Eupago\Message\PagaquiResponse
  */
     protected function _makeRequest($data) {
         if (!$this->isValid()) {
             return $this->response = new PagaquiResponse($this, 'Errors: ' . implode("\n\r", $this->_errors));
         }
 
-        // Basic required data
-        $data = array(
-            'chave' => $this->apiKey(),
-            'id' => $this->getTransactionId(),
-            'valor' => $this->getAmount()
-        );
+        // v1.02 API uses a 'payment' object with ApiKey header auth
+        $data = [
+            'payment' => [
+                'amount'     => $this->getAmount(),
+                'identifier' => $this->getTransactionId()
+            ]
+        ];
 
-        $result = $this->_soapCall($this->getUrl(), 'gerarReferenciaPQ', $data);
+        $result = $this->_apiKeyRestCall($this->getApiKeyUrl() . '/pagaqui/create', $data);
 
         return $this->response = new PagaquiResponse($this, $result);
     }

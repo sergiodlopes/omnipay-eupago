@@ -109,16 +109,17 @@ class MBWayRequest extends Request {
             return $this->response = new MBWayResponse($this, 'Errors: ' . implode("\n\r", $this->_errors));
         }
 
-        // Data
+        // v1.02 API uses a 'payment' object; phone must be prefixed with country code
         $data = [
-            'chave' => $this->apiKey(),
-            'id' => $this->getTransactionId(),
-            'valor' => $this->getAmount(),
-            'alias' => $this->getAlias(),
-            'campos_extra' => $this->getDescription()
+            'payment' => [
+                'amount'     => $this->getAmount(),
+                'identifier' => $this->getTransactionId(),
+                'phone'      => '351#' . $this->getAlias(),
+                'description'=> $this->getDescription()
+            ]
         ];
 
-        $result = $this->_soapCall($this->getUrl(), 'pedidoMBW', $data);
+        $result = $this->_apiKeyRestCall($this->getApiKeyUrl() . '/mbway/create', $data);
 
         return $this->response = new MBWayResponse($this, $result);
     }

@@ -20,7 +20,7 @@ class ReferenceStatusResponse extends Response {
     }
 
     public function getStatus() {
-        return $this->_getData('estado_referencia');
+        return $this->_getData('estado_referencia') ?: $this->_getData('status');
     }
 
     public function isPending() {
@@ -33,7 +33,7 @@ class ReferenceStatusResponse extends Response {
     }
 
     public function getPaymentDate() {
-        return $this->_getData('data_pagamento');
+        return $this->_getData('data_pagamento') ?: $this->_getData('paymentDate') ?: $this->_getData('payment_date');
     }
 
 }

@@ -4,9 +4,6 @@ namespace Omnipay\Eupago\Message;
 
 use Omnipay\Eupago\Message\Request;
 use Omnipay\Eupago\Message\ReferenceStatusResponse;
-use SoapClient;
-use SoapFault;
-use Exception;
 
 /**
  * Eupago ReferenceStatusRequest
@@ -35,21 +32,20 @@ class ReferenceStatusRequest extends Request {
 /**
  * Make the request.
  *
- * @return string
- * @return string
+ * @param array $data Request data
+ * @return \Omnipay\Eupago\Message\ReferenceStatusResponse
  */
     protected function _makeRequest($data) {
         if (!$this->isValid()) {
             return $this->response = new ReferenceStatusResponse($this, 'Errors: ' . implode("\n\r", $this->_errors));
         }
 
-        // Basic required data
         $data = array(
-            'chave' => $this->getApiKey(),
+            'chave'      => $this->getApiKey(),
             'referencia' => $this->getTransactionReference()
         );
 
-        $result = $this->_soapCall($this->getUrl(), 'informacaoReferencia', $data);
+        $result = $this->_restCall($this->getUrl() . '/multibanco/info', $data);
 
         return $this->response = new ReferenceStatusResponse($this, $result);
     }

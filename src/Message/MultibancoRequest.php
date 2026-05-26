@@ -3,7 +3,6 @@
 namespace Omnipay\Eupago\Message;
 
 use Omnipay\Eupago\Message\Request;
-use Exception;
 use DateTime;
 
 /**
@@ -111,18 +110,9 @@ class MultibancoRequest extends Request {
         $this->_sendAmountLimitParameters($data);
         $this->_sendAllowDuplicatesParameter($data);
 
-        $result = $this->_soapCall($this->getUrl(), $this->_getAction(), $data);
+        $result = $this->_restCall($this->getUrl() . '/multibanco/create', $data);
 
         return $this->response = new MultibancoResponse($this, $result);
-    }
-
-/**
- * Check if any date is set if so, return the corresponding action.
- *
- * @return string Action
- */
-    protected function _getAction() {
-        return $this->_hasDateLimit() || $this->_hasAmountLimit() ? 'gerarReferenciaMBDL' : 'gerarReferenciaMB';
     }
 
 /**

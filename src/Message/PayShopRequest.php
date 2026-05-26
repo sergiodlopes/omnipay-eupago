@@ -3,8 +3,6 @@
 namespace Omnipay\Eupago\Message;
 
 use Omnipay\Eupago\Message\Request;
-use Exception;
-use DateTime;
 
 /**
  * Eupago Request
@@ -37,7 +35,7 @@ class PayShopRequest extends Request {
             'valor' => $this->getAmount()
         );
 
-        $result = $this->_soapCall($this->getUrl(), 'gerarReferenciaPS', $data);
+        $result = $this->_restCall($this->getUrl() . '/payshop/create', $data);
 
         return $this->response = new PayShopResponse($this, $result);
     }

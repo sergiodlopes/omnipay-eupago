@@ -5,8 +5,6 @@ namespace Omnipay\Eupago\Message;
 use Omnipay\Common\Message\AbstractRequest;
 use Omnipay\Eupago\ParametersTrait;
 use Exception;
-use SoapClient;
-use SoapFault;
 
 /**
  * Common Request.
@@ -16,23 +14,23 @@ class Request extends AbstractRequest {
     use ParametersTrait;
 
 /**
- * SOAP endpoints.
- *
- * @var array
- */
-    protected $_soapEndpoints = array(
-        'test' => 'https://sandbox.eupago.pt/clientes/api/api.php?wsdl=replica.eupagov20.wsdl',
-        'live' => 'https://clientes.eupago.pt/clientes/api/api.php?wsdl=eupagov20.wsdl'
-    );
-
-/**
- * REST endpoints.
+ * Legacy REST endpoints (body auth) — Multibanco, PayShop, Reference Info.
  *
  * @var array
  */
     protected $_restEndpoints = array(
         'test' => 'https://sandbox.eupago.pt/clientes/rest_api',
-        'live' => 'https://clients.eupago.pt/clientes/rest_api'
+        'live' => 'https://clientes.eupago.pt/clientes/rest_api'
+    );
+
+/**
+ * REST API v1.02 endpoints (ApiKey header auth) — MBWay, Pagaqui.
+ *
+ * @var array
+ */
+    protected $_apiKeyEndpoints = array(
+        'test' => 'https://sandbox.eupago.pt/api/v1.02',
+        'live' => 'https://clientes.eupago.pt/api/v1.02'
     );
 
 /**
@@ -54,20 +52,18 @@ class Request extends AbstractRequest {
     }
 
 /**
- * Set API key.
+ * Get amount.
  *
- * @param string $apiKey API Key
- * @return \Omnipay\Eupago\Message\Request
+ * @return string
  */
     public function getAmount() {
         return $this->getParameter('amount');
     }
 
 /**
- * Set API key.
+ * Get transaction ID.
  *
- * @param string $apiKey API Key
- * @return \Omnipay\Eupago\Message\Request
+ * @return string
  */
     public function getTransactionId() {
         return $this->getParameter('transactionId');
@@ -83,23 +79,30 @@ class Request extends AbstractRequest {
     }
 
 /**
- * Get URL.
- * Checks API key to return endpoint (test or live).
+ * Returns true if the API key indicates a test/sandbox environment.
  *
- * @return string Endpoint URL
+ * @return bool
+ */
+    protected function isTest() {
+        return explode('-', $this->getApiKey())[0] === 'demo';
+    }
+
+/**
+ * Get legacy REST base URL (body auth — Multibanco, PayShop, Reference Info).
+ *
+ * @return string
  */
     public function getUrl() {
-        $parts = explode('-', $this->getApiKey());
+        return $this->isTest() ? $this->_restEndpoints['test'] : $this->_restEndpoints['live'];
+    }
 
-        $endpoints = $this->_soapEndpoints;
-
-        // @todo Support for REST API calls
-        $apiType = $this->getParameter('apiType');
-        if ($apiType && strtoupper($apiType) === 'REST') {
-            $endpoints = $this->_restEndpoints;
-        }
-
-        return $parts[0] === 'demo' ? $endpoints['test'] : $endpoints['live'];
+/**
+ * Get v1.02 REST base URL (ApiKey header auth — MBWay, Pagaqui).
+ *
+ * @return string
+ */
+    public function getApiKeyUrl() {
+        return $this->isTest() ? $this->_apiKeyEndpoints['test'] : $this->_apiKeyEndpoints['live'];
     }
 
 /**
@@ -141,64 +144,72 @@ class Request extends AbstractRequest {
  * @return \Omnipay\Eupago\Message\Response
  */
     public function sendData($data) {
-        // Make request
         return $this->_makeRequest($data);
     }
 
 /**
- * Make SOAP request.
+ * POST JSON to a legacy body-auth endpoint.
+ * Used by Multibanco, PayShop, Reference Info.
  *
- * @param string $url Data to be sent.
- * @param string $action Action to be run.
- * @param array $data Data to be sent.
- * @return \Omnipay\Eupago\Message\Response
+ * @param string $url  Full endpoint URL.
+ * @param array  $data Request payload (API key included as 'chave').
+ * @return \stdClass Decoded JSON response.
  */
-    protected function _soapCall($url, $action, $data) {
-
-        $isTest = explode('-', $this->getApiKey())[0] === 'demo';
-
-        // SOAP 1.2 client
-        $params = [
-            'encoding' => 'UTF-8',
-            'cache_wsdl' => WSDL_CACHE_NONE,
-            'soap_version' => SOAP_1_2,
-            'keep_alive' => false,
-            'connection_timeout' => 180,
-            'stream_context' => stream_context_create([
-                'ssl' => [
-                    'verify_peer' => !$isTest,
-                    'verify_peer_name' => !$isTest,
-                    'allow_self_signed' => $isTest
-                ]
-            ])
-        ];
-
+    protected function _restCall($url, $data) {
         try {
-            $client = new SoapClient($url, $params);
-            $result = $client->{$action}($data);
-        } catch (SoapFault $sf) {
-            throw new Exception($sf->getMessage(), $sf->getCode());
-        }
+            $response = $this->httpClient->request(
+                'POST',
+                $url,
+                ['Content-Type' => 'application/json'],
+                json_encode($data)
+            );
 
-        return $result;
+            return json_decode((string) $response->getBody()) ?: new \stdClass();
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
     }
 
 /**
- * @todo REST API implementation
+ * POST JSON to a v1.02 ApiKey header-auth endpoint.
+ * Used by MBWay, Pagaqui.
  *
- * Make REST request.
+ * The v1.02 API returns HTTP 201 on success with a different JSON structure.
+ * This method normalises the response so existing Response classes work
+ * unchanged: it injects resposta=OK when the HTTP status indicates success.
  *
- * @param string $url Data to be sent.
- * @param string $action Action to be run.
- * @param array $data Data to be sent.
- * @return \Omnipay\Eupago\Message\Response
+ * @param string $url  Full endpoint URL.
+ * @param array  $data Request payload (API key NOT in body — sent as header).
+ * @return \stdClass Decoded JSON response.
  */
-    protected function _restCall($url, $action, $data) {}
+    protected function _apiKeyRestCall($url, $data) {
+        try {
+            $response = $this->httpClient->request(
+                'POST',
+                $url,
+                [
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'ApiKey ' . $this->getApiKey()
+                ],
+                json_encode($data)
+            );
+
+            $result = json_decode((string) $response->getBody()) ?: new \stdClass();
+
+            if (in_array($response->getStatusCode(), [200, 201]) && !isset($result->resposta)) {
+                $result->resposta = 'OK';
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+    }
 
 /**
- * Get validation errors in case.
+ * Get validation errors.
  *
- * @return boolean True if valid, false otherwise
+ * @return array
  */
     public function getErrors() {
         return $this->_errors;

@@ -10,7 +10,7 @@ use Omnipay\Eupago\Message\Response;
 class MultibancoResponse extends Response {
 
     public function getTransactionReference() {
-        return $this->_getData('referencia');
+        return $this->_getData('referencia') ?: $this->_getData('transactionID');
     }
 
     public function getTransactionId() {
@@ -18,7 +18,7 @@ class MultibancoResponse extends Response {
     }
 
     public function getEntity() {
-        return $this->_getData('entidade');
+        return $this->_getData('entidade') ?: $this->_getData('entity');
     }
 
     public function getReference() {
@@ -26,11 +26,11 @@ class MultibancoResponse extends Response {
     }
 
     public function getValue() {
-        return $this->_getData('valor');
+        return $this->_getData('valor') ?: $this->_getData('amount');
     }
 
     public function getStatus() {
-        return $this->_getData('estado');
+        return $this->_getData('estado') ?: $this->_getData('status');
     }
 
 }

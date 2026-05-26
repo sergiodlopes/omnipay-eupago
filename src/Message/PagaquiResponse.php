@@ -10,7 +10,7 @@ use Omnipay\Eupago\Message\Response;
 class PagaquiResponse extends Response {
 
     public function getTransactionReference() {
-        return $this->_getData('referencia');
+        return $this->_getData('referencia') ?: $this->_getData('transactionID');
     }
 
     public function getTransactionId() {

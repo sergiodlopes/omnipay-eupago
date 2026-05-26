@@ -24,11 +24,12 @@ class Response extends AbstractResponse {
  * @return string
  */
     public function getMessage() {
-        return $this->_getData('resposta');
+        return $this->_getData('resposta') ?: $this->_getData('message') ?: $this->_getData('error');
     }
 
 /**
  * Helper method to extract properties from response data.
+ * Handles both stdClass (body-auth REST) and array (v1.02 REST) responses.
  *
  * @param string $property Property name to return value
  * @return mixed
@@ -38,6 +39,10 @@ class Response extends AbstractResponse {
 
         if ($property === null) {
             return $data;
+        }
+
+        if (is_array($data)) {
+            return isset($data[$property]) ? $data[$property] : null;
         }
 
         return isset($data->{$property}) ? $data->{$property} : null;
