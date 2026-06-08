@@ -109,13 +109,15 @@ class MBWayRequest extends Request {
             return $this->response = new MBWayResponse($this, 'Errors: ' . implode("\n\r", $this->_errors));
         }
 
-        // v1.02 API uses a 'payment' object; phone must be prefixed with country code
         $data = [
             'payment' => [
-                'amount'     => $this->getAmount(),
+                'customerPhone' => (string)$this->getAlias(),
+                'countryCode' => '+351',
                 'identifier' => $this->getTransactionId(),
-                'phone'      => '351#' . $this->getAlias(),
-                'description'=> $this->getDescription()
+                'amount' => [
+                    'value' => $this->getAmount(),
+                    'currency' => $this->getCurrency() ?: 'EUR'
+                ]
             ]
         ];
 

@@ -20,7 +20,7 @@ class ReferenceStatusResponse extends Response {
     }
 
     public function getStatus() {
-        return $this->_getData('estado_referencia') ?: $this->_getData('status');
+        return $this->_getData('estado_referencia') ?: $this->_getData('estado') ?: $this->_getData('status');
     }
 
     public function isPending() {

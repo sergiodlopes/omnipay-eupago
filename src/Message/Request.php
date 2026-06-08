@@ -159,11 +159,44 @@ class Request extends AbstractRequest {
         try {
             $ch = curl_init($url);
             curl_setopt_array($ch, [
-                CURLOPT_POST           => true,
-                CURLOPT_POSTFIELDS     => json_encode($data),
-                CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Accept: application/json'],
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => json_encode($data),
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'Accept: application/json'],
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 30,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_CONNECTTIMEOUT => 10,
+            ]);
+            $raw = curl_exec($ch);
+            if ($raw === false) {
+                $error = curl_error($ch);
+                curl_close($ch);
+                throw new \RuntimeException($error);
+            }
+            curl_close($ch);
+            return json_decode($raw) ?: new \stdClass();
+        } catch (\Exception $e) {
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
+/**
+ * GET from a v1.02 ApiKey header-auth endpoint.
+ * Used by MBWay status checks.
+ *
+ * @param string $url Full endpoint URL.
+ * @return \stdClass Decoded JSON response.
+ */
+    protected function _apiKeyRestGet($url) {
+        try {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_HTTPGET => true,
+                CURLOPT_HTTPHEADER => [
+                    'Accept: application/json',
+                    'Authorization: ApiKey ' . $this->getApiKey(),
+                ],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 30,
                 CURLOPT_CONNECTTIMEOUT => 10,
             ]);
             $raw = curl_exec($ch);
@@ -195,15 +228,15 @@ class Request extends AbstractRequest {
         try {
             $ch = curl_init($url);
             curl_setopt_array($ch, [
-                CURLOPT_POST           => true,
-                CURLOPT_POSTFIELDS     => json_encode($data),
-                CURLOPT_HTTPHEADER     => [
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => json_encode($data),
+                CURLOPT_HTTPHEADER => [
                     'Content-Type: application/json',
                     'Accept: application/json',
                     'Authorization: ApiKey ' . $this->getApiKey(),
                 ],
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 30,
+                CURLOPT_TIMEOUT => 30,
                 CURLOPT_CONNECTTIMEOUT => 10,
             ]);
             $raw = curl_exec($ch);

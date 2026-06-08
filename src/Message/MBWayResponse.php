@@ -10,7 +10,8 @@ use Omnipay\Eupago\Message\Response;
 class MBWayResponse extends Response {
 
     public function getTransactionReference() {
-        return $this->_getData('referencia') ?: $this->_getData('transactionID');
+        // v1.02 API returns 'reference' (numeric, used for status checks) and 'transactionID'.
+        return $this->_getData('reference') ?: $this->_getData('transactionID');
     }
 
     public function getTransactionId() {
